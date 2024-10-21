@@ -4,9 +4,9 @@ const app = express();
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
+const Product = require('../models/Product');
 
-
-mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017', { 
+mongoose.connect('mongodb://localhost:27017/alletracker', { 
 }).then(() => {
 	console.log('Connected to MongoDB...');
 }).catch(err => {
