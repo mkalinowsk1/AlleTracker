@@ -13,8 +13,10 @@ mongoose.connect('mongodb://localhost:27017/alletracker', {
 	console.error('Could not connect to MongoDB...');
 });
 
-app.use(express.urlencoded({ extended: true }));
 
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 app.use(express.json())
 
 
