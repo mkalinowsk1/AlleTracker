@@ -1,4 +1,11 @@
 {
+  "name": "alletracker",
+  "version": "0.0.5",
+  "main": "index.js",
+  "scripts": {
+    "start": "node alletracker/src/index.js",
+    "dev": "nodemon alletracker/src/index.js"
+  },
   "dependencies": {
     "@angular/common": "^18.2.8",
     "@angular/core": "^18.2.8",
@@ -8,6 +15,7 @@
     "express": "^4.21.1",
     "mongo": "^0.1.0",
     "mongoose": "^8.7.2",
+    "nodemon": "^3.1.7",
     "simple-oauth2": "^5.1.0"
   }
 }
