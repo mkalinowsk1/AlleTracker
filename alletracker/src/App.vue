@@ -1,25 +1,41 @@
 <template>
   <div id="app">
-    <HomePage />
+    <Header />
+    <SearchBar />
+    <Footer />
   </div>
 </template>
 
 <script>
-import HomePage from './components/HomePage.vue';
+import Header from './components/AppHeader.vue';
+import SearchBar from './components/SearchBar.vue';
+import Footer from './components/AppFooter.vue';
 
 export default {
-  name: 'App',
   components: {
-    HomePage,
-  },
+    Header,
+    SearchBar,
+    Footer
+  }
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+/* Global styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0d1b2a;
+  color: #fff;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
+
+@media (max-width: 600px) {
+  .search-bar input {
+    width: 90%;
+  }
+  .search-bar button {
+    padding: 10px;
+  }
+}
