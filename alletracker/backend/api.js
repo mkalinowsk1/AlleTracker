@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { getAccessToken } = require('./auth');
 
-const API_BASE_URL = 'https://api.allegro.pl';
+const API_BASE_URL = 'https://api.allegro.pl.allegrosandbox.pl';
 
   async function searchOffers(phrase) {
 	// Get the access token (assuming getAccessToken() handles this)

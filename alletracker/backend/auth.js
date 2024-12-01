@@ -7,7 +7,7 @@ const config = {
 		secret: process.env.CLIENT_SECRET,
 	},
 	auth: {
-		tokenHost: 'https://allegro.pl',
+		tokenHost: 'https://allegro.pl.allegrosandbox.pl',
 		tokenPath: '/auth/oauth/token',
 	},
 };
