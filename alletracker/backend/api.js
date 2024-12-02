@@ -18,6 +18,8 @@ const API_BASE_URL = 'https://api.allegro.pl.allegrosandbox.pl';
 		  phrase,
 		},
 	  });
+	  console.log('Access Token:', accessToken);
+	  console.log('Response:', response.data);
 	  return response.data;
 	} catch (error) {
 	  // Handle and throw the error if the request fails
