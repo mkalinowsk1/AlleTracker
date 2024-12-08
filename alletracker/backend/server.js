@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { searchOffers } = require('./api');
+const { searchAndCalculatePrices } = require('./api');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,8 +22,8 @@ app.get('/api/simpleasker/:parameter', (req, res) => {
     if (!parameter) {
       return res.status(400).json({ error: 'Missing parameter' });
     }
-  
-    res.json(searchOffers(parameter));
+    
+    res.json(searchAndCalculatePrices(parameter));
   });
 
 app.listen(PORT, () => {
