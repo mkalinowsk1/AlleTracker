@@ -4,6 +4,7 @@ const ItemSchema = new mongoose.Schema({
     phrase: {
         type: String,
         required: true,
+        index: true,
     },
     maxPrice: {
         type: Number,

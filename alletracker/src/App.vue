@@ -1,22 +1,20 @@
 <template>
   <div id="app">
     <Header />
-    <SearchBar />
+    <router-view />
     <Footer />
   </div>
 </template>
 
 <script>
 import Header from './components/AppHeader.vue';
-import SearchBar from './components/SearchBar.vue';
 import Footer from './components/AppFooter.vue';
 
 export default {
   components: {
     Header,
-    SearchBar,
-    Footer
-  }
+    Footer,
+  },
 };
 </script>
 
@@ -30,12 +28,3 @@ body {
   text-align: center;
 }
 </style>
-
-@media (max-width: 600px) {
-  .search-bar input {
-    width: 90%;
-  }
-  .search-bar button {
-    padding: 10px;
-  }
-}

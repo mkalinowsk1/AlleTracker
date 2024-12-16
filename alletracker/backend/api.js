@@ -73,26 +73,31 @@ async function searchAndCalculatePrices(phrase) {
 }
 
 async function getOffers(offset, limit, phrase) {
-	const accessToken = await getAccessToken();
-	
-	try {
-		console.log(phrase)
-	  const response = await axios.get(`${API_BASE_URL}/sale/products`, {
-		headers: {
-		  Authorization: `Bearer ${accessToken}`,
-		  Accept: 'application/vnd.allegro.public.v1+json',
-		},
-		params: {
-		  offset,
-		  limit,
-		  phrase,
-		},
-	  });
-	  return response.data;
-	} catch (error) {
-	  console.error('API Request Error:', error.response ? error.response.data : error.message);
-	  throw error;
-	}
+  try {
+    const response = await axios.get(`${API_BASE_URL}/sale/products`, {
+      headers: {
+        Authorization: `Bearer ${await getAccessToken()}`,
+        Accept: 'application/vnd.allegro.public.v1+json',
+      },
+      params: { offset, limit, phrase },
+    });
+    return response.data;
+  } catch (error) {
+    const statusCode = error.response?.status || 500;
+    const message = error.response?.data?.error || 'Unknown error';
+    console.error(`API Request Error: ${message}`);
+    throw { status: statusCode, message };
+  }
 }
 
-module.exports = { searchAndCalculatePrices, getOffers };
+const fetchProductData = async () => {
+    try {
+      const response = await axios.get(`/api/simpleasker/${route.params.id}`);
+      productName.value = response.data.phrase; // Name or phrase
+      productData.value = response.data.prices; // Prices for graph rendering
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    }
+  };
+
+module.exports = { searchAndCalculatePrices, getOffers, fetchProductData };

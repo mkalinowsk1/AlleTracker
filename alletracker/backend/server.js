@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const Item = require('./Models/Item');
 const { searchAndCalculatePrices, getOffers } = require('./api');
 
 const app = express();
@@ -39,15 +40,29 @@ app.get('/api/message', (req, res) => {
 });
 
 app.get('/api/categories/:parameter', async (req, res) => {
+  const phrase = req.params.parameter;
+  const offset = parseInt(req.query.offset) || 0;
+  const limit = parseInt(req.query.limit) || 10;
+  const minPrice = parseFloat(req.query.minPrice) || 0;
+  const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
+
   try {
-    const phrase = req.params.parameter;
-    const offers = await getOffers(0, 2, phrase);
+    const offers = await getOffers(offset, limit, phrase);
 
-    const uniqueNamesArray = getUniqueCategories(offers);
+    const filteredOffers = offers.products.filter(offer => {
+      const price = parseFloat(offer.sellingMode.price.amount);
+      return price >= minPrice && price <= maxPrice;
+    });
 
-    res.json({ message: "Example extracted categories: " + [uniqueNamesArray] });
+    const uniqueNamesArray = getUniqueCategories(filteredOffers);
+
+    res.json({
+      categories: uniqueNamesArray,
+      offers: filteredOffers.slice(offset, offset + limit),
+      total: filteredOffers.length,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message || "Internal Server Error" });
+    res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 });
 
@@ -63,9 +78,42 @@ app.get('/api/simpleasker/:parameter', async (req, res) => {
 
   try {
       const result = await searchAndCalculatePrices(parameter);
-      res.json(result);
+
+      const prices = await Item.find({ phrase: parameter }, 'maxPrice minPrice avgPrice');
+      res.json( ...result, prices);
   } catch (error) {
       res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+
+app.get('/api/search/:term', async (req, res) => {
+  const searchTerm = req.params.term;
+
+  try {
+      // Search for items in the database that match the search term
+      const results = await Item.find({
+          phrase: { $regex: searchTerm, $options: 'i' }, // Case-insensitive search
+      }).limit(10); // Limit results to 10 for performance
+
+      res.json(results);
+  } catch (error) {
+      console.error('Error searching database:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/product/:id', async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+      const product = await Item.findById(productId);
+      if (!product) {
+          return res.status(404).json({ error: 'Product not found' });
+      }
+      res.json(product);
+  } catch (error) {
+      console.error('Error fetching product:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
