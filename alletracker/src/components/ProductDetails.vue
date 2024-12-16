@@ -15,13 +15,15 @@
 	
 	<div class="product-content">
 		<div class="product-image-container">
+	<a :href="generateOfferLink(product.offerId)" target="_blank" rel="noopener noreferrer">
 		<img 
-			:src="product.imageUrl || '/placeholder.jpg'" 
-			:alt="product.phrase"
-			class="product-image"
-			@error="handleImageError"
+		:src="product.imageUrl || '/placeholder.jpg'" 
+		:alt="product.phrase || 'Product image'" 
+		class="product-image" 
+		@error="handleImageError"
 		/>
-		</div>
+	</a>
+</div>
 		
 		<div class="price-stats">
 		<div class="price-card min">
@@ -86,6 +88,10 @@ setup() {
 	return Number(price).toFixed(2);
 	};
 
+	const generateOfferLink = (offerId) => {
+    return `https://allegro.pl.allegrosandbox.pl/oferta/${offerId}`;
+    };
+
 	onMounted(() => {
 	fetchProductDetails();
 	});
@@ -95,7 +101,8 @@ setup() {
 	loading,
 	error,
 	handleImageError,
-	formatPrice
+	formatPrice,
+	generateOfferLink
 	};
 }
 };
