@@ -80,6 +80,7 @@ app.get('/api/simpleasker/:parameter', async (req, res) => {
       const result = await searchAndCalculatePrices(parameter);
 
       const prices = await Item.find({ phrase: parameter }, 'maxPrice minPrice avgPrice');
+      console.log(result, prices);
       res.json( ...result, prices);
   } catch (error) {
       res.status(500).json({ error: error.message || 'Internal Server Error' });

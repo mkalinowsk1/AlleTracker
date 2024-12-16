@@ -26,6 +26,14 @@ const ItemSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    imageUrl: {
+        type: String,
+        required: true,
+    },
+    offerId: {
+        type: String,
+        required: true,
+    },
 });
 
 const Item = mongoose.model('Item', ItemSchema);

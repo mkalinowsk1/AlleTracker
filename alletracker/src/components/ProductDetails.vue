@@ -16,7 +16,7 @@
 	<div class="product-content">
 		<div class="product-image-container">
 		<img 
-			:src="product.image || '/placeholder.jpg'" 
+			:src="product.imageUrl || '/placeholder.jpg'" 
 			:alt="product.phrase"
 			class="product-image"
 			@error="handleImageError"
