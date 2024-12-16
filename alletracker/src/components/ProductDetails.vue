@@ -28,17 +28,17 @@
 		<div class="price-stats">
 		<div class="price-card min">
 			<div class="price-label">Minimum Price</div>
-			<div class="price-value">${{ formatPrice(product.minPrice) }}</div>
+			<div class="price-value">{{ formatPrice(product.minPrice) }} zł</div>
 		</div>
 		
 		<div class="price-card avg">
 			<div class="price-label">Average Price</div>
-			<div class="price-value">${{ formatPrice(product.avgPrice) }}</div>
+			<div class="price-value">{{ formatPrice(product.avgPrice) }} zł</div>
 		</div>
 		
 		<div class="price-card max">
 			<div class="price-label">Maximum Price</div>
-			<div class="price-value">${{ formatPrice(product.maxPrice) }}</div>
+			<div class="price-value">{{ formatPrice(product.maxPrice) }} zł</div>
 		</div>
 		</div>
 
