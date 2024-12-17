@@ -1,101 +1,68 @@
 const mongoose = require('mongoose');
 const axios = require('axios');
-const Item = require('./Models/Item');
+const PriceSearch = require('./Models/PriceSearch');
+const ProductSearch = require('./Models/ProductSearch');
 const { getAccessToken } = require('./auth');
 
 const API_BASE_URL = 'https://api.allegro.pl.allegrosandbox.pl';
 
 async function searchAndCalculatePrices(phrase) {
-  // Get the access token
   const accessToken = await getAccessToken();
 
   try {
-      console.log(phrase);
       const response = await axios.get(`${API_BASE_URL}/offers/listing`, {
           headers: {
               Authorization: `Bearer ${accessToken}`,
               Accept: 'application/vnd.allegro.public.v1+json',
           },
-          params: {
-              phrase,
-          },
+          params: { phrase },
       });
-
-      console.log('Access Token:', accessToken);
-      console.log('Response:', response.data);
 
       const data = response.data;
       const prices = [];
-      let firstItem = null;
+      let imageUrl = null; // Representative image URL
+      let offerId = null; // Example offer ID
 
-      // Downloading "promoted" prices and first item
+      // Handle "promoted" prices
       if (data.items.promoted && data.items.promoted.length > 0) {
-          data.items.promoted.forEach(item => {
-          const price = parseFloat(item.sellingMode.price.amount);
-          prices.push(price);
-          });
-
-          // Extract first item's id and first image
-          const firstPromotedItem = data.items.promoted[0];
-          firstItem = {
-          id: firstPromotedItem.id,
-          image: firstPromotedItem.images.length > 0 ? firstPromotedItem.images[0].url : null,
-          };
-      }
-
-      // Downloading "regular" prices (if no "promoted" items found)
-      if (!firstItem && data.items.regular && data.items.regular.length > 0) {
-          data.items.regular.forEach(item => {
+          data.items.promoted.forEach((item) => {
               const price = parseFloat(item.sellingMode.price.amount);
               prices.push(price);
+
+              // Save representative image URL and offer ID
+              if (!imageUrl) imageUrl = item.images[0]?.url || null;
+              if (!offerId) offerId = item.id;
           });
-
-          // Extract first item's id and images
-          const firstRegularItem = data.items.regular[0];
-          firstItem = {
-              id: firstRegularItem.id,
-              images: firstRegularItem.images.map(img => img.url),
-          };
       }
 
-      // Calculating values
-      let maxPrice = 0, minPrice = 0, avgPrice = 0, itemCount = 0;
+      // Handle "regular" prices
+      if (data.items.regular && data.items.regular.length > 0) {
+          data.items.regular.forEach((item) => {
+              const price = parseFloat(item.sellingMode.price.amount);
+              prices.push(price);
+
+              // Save representative image URL and offer ID
+              if (!imageUrl) imageUrl = item.images[0]?.url || null;
+              if (!offerId) offerId = item.id;
+          });
+      }
+
       if (prices.length > 0) {
-          maxPrice = Math.max(...prices);
-          minPrice = Math.min(...prices);
-          avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
-          itemCount = prices.length;
-          console.log(`Max price: ${maxPrice}, Min price: ${minPrice}, Avg price: ${avgPrice}`);
+          const maxPrice = Math.max(...prices);
+          const minPrice = Math.min(...prices);
+          const avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+
+          console.log(`[DEBUG] Max Price: ${maxPrice}, Min Price: ${minPrice}, Avg Price: ${avgPrice}`);
+          return { maxPrice, minPrice, avgPrice, itemCount: prices.length, phrase, imageUrl, offerId };
+      } else {
+          console.log('[DEBUG] No prices found.');
+          return { maxPrice: 0, minPrice: 0, avgPrice: 0, itemCount: 0, phrase, imageUrl: null, offerId: null };
       }
-
-      // Save search results to MongoDB
-      const searchResult = new Item({
-          phrase,
-          maxPrice,
-          minPrice,
-          avgPrice,
-          itemCount,
-          offerId: firstItem ? firstItem.id : null, // Include first item's id
-          imageUrl: firstItem ? firstItem.image : null // Include first item's images
-      });
-
-      await searchResult.save();
-      console.log('Search result saved to database');
-
-      return { 
-          maxPrice, 
-          minPrice, 
-          avgPrice, 
-          phrase, 
-          offerId: firstItem ? firstItem.id : null, // Include first item's id
-          imageUrl: firstItem ? firstItem.image : null // Include first item's images
-      };
   } catch (error) {
-      console.error('API Request Error:', error.response ? error.response.data : error.message);
+      console.error('[ERROR] API Request Error:', error.response ? error.response.data : error.message);
       throw error;
   }
 }
-
 
 async function getOffers(offset, limit, phrase) {
   try {

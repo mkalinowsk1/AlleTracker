@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const Item = require('./Models/Item');
+const PriceSearch = require('./Models/PriceSearch');
+const ProductSearch = require('./Models/ProductSearch');
 const { searchAndCalculatePrices, getOffers } = require('./api');
 
 const app = express();
@@ -39,50 +40,54 @@ app.get('/api/message', (req, res) => {
     res.json({ message: 'Hello from Express!' });
 });
 
-app.get('/api/categories/:parameter', async (req, res) => {
-  const phrase = req.params.parameter;
-  const offset = parseInt(req.query.offset) || 0;
-  const limit = parseInt(req.query.limit) || 10;
-  const minPrice = parseFloat(req.query.minPrice) || 0;
-  const maxPrice = parseFloat(req.query.maxPrice) || Number.MAX_VALUE;
-
-  try {
-    const offers = await getOffers(offset, limit, phrase);
-
-    const filteredOffers = offers.products.filter(offer => {
-      const price = parseFloat(offer.sellingMode.price.amount);
-      return price >= minPrice && price <= maxPrice;
-    });
-
-    const uniqueNamesArray = getUniqueCategories(filteredOffers);
-
-    res.json({
-      categories: uniqueNamesArray,
-      offers: filteredOffers.slice(offset, offset + limit),
-      total: filteredOffers.length,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
-  }
-});
-
-// Define a POST route with a URL parameter
 app.get('/api/simpleasker/:parameter', async (req, res) => {
-  // Extract the parameter from the URL
   const parameter = req.params.parameter;
 
-  // Check if parameter is provided
   if (!parameter) {
       return res.status(400).json({ error: 'Missing parameter' });
   }
 
   try {
+      // Check or create product entry
+      let product = await ProductSearch.findOne({ name: parameter });
+
+      if (!product) {
+          product = new ProductSearch({ name: parameter, lastSearched: new Date() });
+          await product.save();
+          console.log('[DEBUG] New product entry created:', product);
+      } else {
+          const now = new Date();
+          const timeDiff = now - product.lastSearched;
+
+          // Only allow saving price data if 24 hours have passed since last search
+          if (timeDiff <= 24 * 60 * 60 * 1000) {
+              console.log('[DEBUG] Last search was within 24 hours. Skipping save.');
+              return res.json({ message: 'Search performed recently. No new data saved.' });
+          }
+
+          // Update the last searched time
+          product.lastSearched = now;
+          await product.save();
+          console.log('[DEBUG] Product entry updated with new lastSearched:', product);
+      }
+
+      // Perform search and calculate prices
       const result = await searchAndCalculatePrices(parameter);
 
-      const prices = await Item.find({ phrase: parameter }, 'maxPrice minPrice avgPrice');
-      console.log(result, prices);
-      res.json( ...result, prices);
+      // Save price data to the database
+      const newSearch = new PriceSearch(result);
+      await newSearch.save();
+      console.log('[DEBUG] New price data saved to database:', newSearch);
+
+      // Retrieve historical prices for the item
+      const prices = await PriceSearch.find({ phrase: parameter }, 'maxPrice minPrice avgPrice searchDate');
+
+      console.log('[DEBUG] Historical Prices:', prices);
+
+      // Respond with current and historical prices
+      res.json({ currentPrices: result, historicalPrices: prices });
   } catch (error) {
+      console.error('[ERROR] Error occurred:', error.message);
       res.status(500).json({ error: error.message || 'Internal Server Error' });
   }
 });
