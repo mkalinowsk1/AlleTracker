@@ -70,6 +70,11 @@
 		<div class="item-count">
 		Based on {{ product.itemCount || 0 }} items
 		</div>
+		<div class="graph-link">
+				<router-link :to="`/graph/${product.phrase}`" class="graph-button">
+					View Graph Statistics
+				</router-link>
+			</div>
 	</div>
 	</div>
 </div>

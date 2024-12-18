@@ -5,7 +5,7 @@ import ProductDetails from '../components/ProductDetails.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
-  { path: '/graph/:id', name: 'Graph', component: GraphPage, props: true },
+  { path: '/graph/:phrase', name: 'Graph', component: GraphPage, props: true },
   { path: '/product/:id', name: 'Product', component: ProductDetails},
 ];
 

@@ -7,16 +7,17 @@
         placeholder="Search for product"
         class="search-input"
         @input="debouncedSearch"
+        @keyup.enter="handleEnter"
       />
       <button @click="searchProduct" class="search-button">
         <span>&#10140;</span>
       </button>
     </div>
-    
+
     <div v-if="isLoading" class="loading">
       Searching...
     </div>
-    
+
     <div v-if="error" class="error">
       {{ error }}
     </div>
@@ -57,7 +58,7 @@ export default {
       try {
         isLoading.value = true;
         error.value = '';
-        
+
         const response = await axios.get(`/api/search/${term}`, {
           timeout: 5000,
           headers: {
@@ -84,14 +85,38 @@ export default {
       debouncedSearchFn(searchTerm.value);
     };
 
+    const handleEnter = async () => {
+      if (products.value.length === 0 && searchTerm.value) {
+        try {
+          isLoading.value = true;
+          error.value = '';
+
+          const response = await axios.get(`/api/simpleasker/${searchTerm.value}`, {
+            timeout: 5000,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.data) {
+            goToGraph(response.data);
+          }
+        } catch (err) {
+          console.error('Error with simpleasker:', err);
+          error.value = 'Unable to process your request. Please try again later.';
+        } finally {
+          isLoading.value = false;
+        }
+      }
+    };
+
     const goToGraph = (product) => {
       if (!product || !product._id) {
         console.error('Invalid product data');
         return;
       }
-      
+
       try {
-        //window.location.href = `/graph/${product._id}`;
         window.location.href = `/product/${product._id}`;
       } catch (err) {
         console.error('Navigation error:', err);
@@ -108,6 +133,7 @@ export default {
       isLoading,
       error,
       searchProduct,
+      handleEnter,
       debouncedSearch: () => debouncedSearchFn(searchTerm.value),
       goToGraph
     };
