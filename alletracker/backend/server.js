@@ -135,6 +135,7 @@ app.get('/api/prices/:phrase', async (req, res) => {
 });
 
 async function getPricesAndDates(phrase) {
+  //console.log(phrase);
   try {
     // Wyszukaj wszystkie wpisy dla danego `phrase` i wybierz tylko `avgPrice` oraz `searchDate`
     const prices = await PriceSearch.find(
@@ -152,7 +153,7 @@ async function getPricesAndDates(phrase) {
       const date = new Date(p.searchDate);
       return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
     });
-
+    console.log(searchDates);
     return { avgPrices, searchDates };
   } catch (error) {
     console.error('Error fetching prices:', error);

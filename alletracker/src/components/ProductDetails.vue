@@ -60,11 +60,11 @@
 		<div class="item-count">
 		Based on {{ product.itemCount || 0 }} items
 		</div>
-		<div class="graph-link">
-				<router-link :to="`/graph/${product.phrase}`" class="graph-button">
+		<div  class="graph-link" >
+			<router-link :to="`/graph/${product.phrase}`" class="graph-button">
 					View Graph Statistics
 				</router-link>
-			</div>
+</div>
 	</div>
 	</div>
 </div>
@@ -112,6 +112,19 @@ setup() {
     return `https://allegro.pl.allegrosandbox.pl/oferta/${offerId}`;
     };
 
+	const goToGraph = (product) => {
+      if (!product || !product.name) {
+        console.error('Invalid product data');
+        return;
+      }
+
+      try {
+        window.location.href = `/graph/${product.name}`;
+      } catch (err) {
+        console.error('Navigation error:', err);
+      }
+    };
+
 	onMounted(() => {
 	fetchProductDetails();
 	});
@@ -122,7 +135,8 @@ setup() {
 	error,
 	handleImageError,
 	formatPrice,
-	generateOfferLink
+	generateOfferLink,
+	goToGraph
 	};
 }
 };
@@ -257,5 +271,18 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 .product-content {
 	padding: 1rem;
 }
+
+.graph-link {
+    text-align: center;
+    margin: 1rem auto;
+    cursor: pointer;
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.graph-link:hover {
+    text-decoration: none;
+}
+
 }
 </style>
