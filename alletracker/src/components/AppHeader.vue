@@ -1,6 +1,8 @@
 <template>
     <header class="header">
-      <h1><span style="color: orange;">Alle</span>Tracker</h1>
+      <h1>
+        <a href="/" class="logo-link"><span style="color: orange;">Alle</span>Tracker</a>
+      </h1>
       <p>Website for tracking product statistics dedicated for Allegro</p>
     </header>
   </template>
