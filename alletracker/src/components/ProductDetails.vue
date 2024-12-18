@@ -14,31 +14,56 @@
 	</div>
 	
 	<div class="product-content">
-		<div class="product-image-container">
-	<a :href="generateOfferLink(product.offerId)" target="_blank" rel="noopener noreferrer">
+		<!-- <div class="product-image-container">
+	<a :href="generateOfferLink(product.avgOfferId)" target="_blank" rel="noopener noreferrer">
 		<img 
-		:src="product.imageUrl || '/placeholder.jpg'" 
+		:src="product.avgImageUrl || '/placeholder.jpg'" 
 		:alt="product.phrase || 'Product image'" 
 		class="product-image" 
 		@error="handleImageError"
 		/>
 	</a>
-</div>
+</div> -->
 		
 		<div class="price-stats">
 		<div class="price-card min">
+			<a :href="generateOfferLink(product.minOfferId)" target="_blank" rel="noopener noreferrer">
 			<div class="price-label">Minimum Price</div>
+			<img 
+		:src="product.minImageUrl || '/placeholder.jpg'" 
+		:alt="product.phrase || 'Product image'" 
+		class="product-image" 
+		@error="handleImageError"
+		/>
 			<div class="price-value">{{ formatPrice(product.minPrice) }} zł</div>
+		</a>
 		</div>
 		
 		<div class="price-card avg">
+			<a :href="generateOfferLink(product.avgOfferId)" target="_blank" rel="noopener noreferrer">
 			<div class="price-label">Average Price</div>
-			<div class="price-value">{{ formatPrice(product.avgPrice) }} zł</div>
+			<img 
+		:src="product.avgImageUrl || '/placeholder.jpg'" 
+		:alt="product.phrase || 'Product image'" 
+		class="product-image" 
+		@error="handleImageError"
+		/>
+			<div class="price-value">{{ formatPrice(product.avgPrice) }} zł
+			</div>
+		</a>
 		</div>
 		
 		<div class="price-card max">
+			<a :href="generateOfferLink(product.maxOfferId)" target="_blank" rel="noopener noreferrer">
 			<div class="price-label">Maximum Price</div>
+			<img 
+		:src="product.maxImageUrl || '/placeholder.jpg'" 
+		:alt="product.phrase || 'Product image'" 
+		class="product-image" 
+		@error="handleImageError"
+		/>
 			<div class="price-value">{{ formatPrice(product.maxPrice) }} zł</div>
+		</a>
 		</div>
 		</div>
 
