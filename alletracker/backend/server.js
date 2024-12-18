@@ -97,8 +97,8 @@ app.get('/api/search/:term', async (req, res) => {
 
   try {
       // Search for items in the database that match the search term
-      const results = await PriceSearch.find({
-          phrase: { $regex: searchTerm, $options: 'i' }, // Case-insensitive search
+      const results = await ProductSearch.find({
+          name: { $regex: searchTerm, $options: 'i' }, // Case-insensitive search
       }).limit(10); // Limit results to 10 for performance
 
       res.json(results);
@@ -108,11 +108,11 @@ app.get('/api/search/:term', async (req, res) => {
   }
 });
 
-app.get('/api/product/:id', async (req, res) => {
-  const productId = req.params.id;
+app.get('/api/product/:phrase', async (req, res) => {
+  const phrase = req.params.phrase;
 
   try {
-      const product = await PriceSearch.findById(productId);
+      const product = await PriceSearch.findOne({ phrase: phrase });
       if (!product) {
           return res.status(404).json({ error: 'Product not found' });
       }

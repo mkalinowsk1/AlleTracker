@@ -14,16 +14,6 @@
 	</div>
 	
 	<div class="product-content">
-		<!-- <div class="product-image-container">
-	<a :href="generateOfferLink(product.avgOfferId)" target="_blank" rel="noopener noreferrer">
-		<img 
-		:src="product.avgImageUrl || '/placeholder.jpg'" 
-		:alt="product.phrase || 'Product image'" 
-		class="product-image" 
-		@error="handleImageError"
-		/>
-	</a>
-</div> -->
 		
 		<div class="price-stats">
 		<div class="price-card min">

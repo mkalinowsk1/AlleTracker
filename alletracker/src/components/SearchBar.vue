@@ -26,10 +26,10 @@
       <ul>
         <li
           v-for="product in products"
-          :key="product._id"
+          :key="product.phrase"
           @click="goToGraph(product)"
         >
-          {{ product.phrase }}
+          {{ product.name }}
         </li>
       </ul>
     </div>
@@ -111,13 +111,13 @@ export default {
     };
 
     const goToGraph = (product) => {
-      if (!product || !product._id) {
+      if (!product || !product.name) {
         console.error('Invalid product data');
         return;
       }
 
       try {
-        window.location.href = `/product/${product._id}`;
+        window.location.href = `/product/${product.name}`;
       } catch (err) {
         console.error('Navigation error:', err);
       }
