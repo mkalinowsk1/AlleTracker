@@ -20,31 +20,22 @@ async function searchAndCalculatePrices(phrase) {
 
       const data = response.data;
       const prices = [];
-      let imageUrl = null; // Representative image URL
-      let offerId = null; // Example offer ID
+      const items = [];
 
-      // Handle "promoted" prices
+      // Extract relevant data
+      const processItems = (list) => {
+          list.forEach((item) => {
+              const price = parseFloat(item.sellingMode.price.amount);
+              prices.push(price);
+              items.push({ price, offerId: item.id, imageUrl: item.images[0]?.url || null });
+          });
+      };
+
       if (data.items.promoted && data.items.promoted.length > 0) {
-          data.items.promoted.forEach((item) => {
-              const price = parseFloat(item.sellingMode.price.amount);
-              prices.push(price);
-
-              // Save representative image URL and offer ID
-              if (!imageUrl) imageUrl = item.images[0]?.url || null;
-              if (!offerId) offerId = item.id;
-          });
+          processItems(data.items.promoted);
       }
-
-      // Handle "regular" prices
       if (data.items.regular && data.items.regular.length > 0) {
-          data.items.regular.forEach((item) => {
-              const price = parseFloat(item.sellingMode.price.amount);
-              prices.push(price);
-
-              // Save representative image URL and offer ID
-              if (!imageUrl) imageUrl = item.images[0]?.url || null;
-              if (!offerId) offerId = item.id;
-          });
+          processItems(data.items.regular);
       }
 
       if (prices.length > 0) {
@@ -52,17 +43,50 @@ async function searchAndCalculatePrices(phrase) {
           const minPrice = Math.min(...prices);
           const avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
 
+          // Find respective products
+          const maxProduct = items.find(item => item.price === maxPrice);
+          const minProduct = items.find(item => item.price === minPrice);
+          const avgProduct = items.reduce((closest, item) => {
+              return Math.abs(item.price - avgPrice) < Math.abs(closest.price - avgPrice) ? item : closest;
+          }, items[0]);
+
           console.log(`[DEBUG] Max Price: ${maxPrice}, Min Price: ${minPrice}, Avg Price: ${avgPrice}`);
-          return { maxPrice, minPrice, avgPrice, itemCount: prices.length, phrase, imageUrl, offerId };
+          return {
+              maxPrice,
+              minPrice,
+              avgPrice,
+              itemCount: prices.length,
+              phrase,
+              maxOfferId: maxProduct?.offerId || null,
+              maxImageUrl: maxProduct?.imageUrl || null,
+              minOfferId: minProduct?.offerId || null,
+              minImageUrl: minProduct?.imageUrl || null,
+              avgOfferId: avgProduct?.offerId || null,
+              avgImageUrl: avgProduct?.imageUrl || null,
+          };
       } else {
           console.log('[DEBUG] No prices found.');
-          return { maxPrice: 0, minPrice: 0, avgPrice: 0, itemCount: 0, phrase, imageUrl: null, offerId: null };
+          return {
+              maxPrice: 0,
+              minPrice: 0,
+              avgPrice: 0,
+              itemCount: 0,
+              phrase,
+              maxOfferId: null,
+              maxImageUrl: null,
+              minOfferId: null,
+              minImageUrl: null,
+              avgOfferId: null,
+              avgImageUrl: null,
+          };
       }
   } catch (error) {
       console.error('[ERROR] API Request Error:', error.response ? error.response.data : error.message);
       throw error;
   }
 }
+
+
 
 async function getOffers(offset, limit, phrase) {
   try {

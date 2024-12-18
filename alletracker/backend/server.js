@@ -60,10 +60,10 @@ app.get('/api/simpleasker/:parameter', async (req, res) => {
           const timeDiff = now - product.lastSearched;
 
           // Only allow saving price data if 24 hours have passed since last search
-          if (timeDiff <= 24 * 60 * 60 * 1000) {
-              console.log('[DEBUG] Last search was within 24 hours. Skipping save.');
-              return res.json({ message: 'Search performed recently. No new data saved.' });
-          }
+         // if (timeDiff <= 24 * 60 * 60 * 1000) {
+         //     console.log('[DEBUG] Last search was within 24 hours. Skipping save.');
+         //     return res.json({ message: 'Search performed recently. No new data saved.' });
+         // }
 
           // Update the last searched time
           product.lastSearched = now;
@@ -122,6 +122,28 @@ app.get('/api/product/:id', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/api/prices/:phrase', async (req, res) => {
+  const phrase = req.params.phrase;
+
+  try {
+    // Wyszukaj wszystkie wpisy dla danego `phrase` i wybierz tylko `avgPrice` oraz `searchDate`
+    const prices = await PriceSearch.find(
+      { phrase: phrase },
+      'avgPrice searchDate' // Wybierz tylko te pola
+    ).sort({ searchDate: 1 }); // Opcjonalnie sortuj wyniki po dacie rosnąco
+
+    if (!prices.length) {
+      return res.status(404).json({ error: 'No prices found for the given phrase' });
+    }
+
+    res.json(prices);
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

@@ -26,11 +26,27 @@ const ItemSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    imageUrl: {
+    maxImageUrl: {
         type: String,
         required: true,
     },
-    offerId: {
+    maxOfferId: {
+        type: String,
+        required: true,
+    },
+    minImageUrl: {
+        type: String,
+        required: true,
+    },
+    minOfferId: {
+        type: String,
+        required: true,
+    },
+    avgImageUrl: {
+        type: String,
+        required: true,
+    },
+    avgOfferId: {
         type: String,
         required: true,
     },
