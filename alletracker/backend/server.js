@@ -137,12 +137,20 @@ app.get('/api/prices/:phrase', async (req, res) => {
       return res.status(404).json({ error: 'No prices found for the given phrase' });
     }
 
-    res.json(prices);
+    // Podziel wyniki na dwie tablice: ceny i daty (przekonwertowane na `day.month.year`)
+    const avgPrices = prices.map(p => p.avgPrice);
+    const searchDates = prices.map(p => {
+      const date = new Date(p.searchDate);
+      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+    });
+
+    res.json({ avgPrices, searchDates });
   } catch (error) {
     console.error('Error fetching prices:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 app.listen(PORT, () => {
