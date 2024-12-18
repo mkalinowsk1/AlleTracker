@@ -123,6 +123,17 @@ app.get('/api/product/:phrase', async (req, res) => {
   }
 });
 
+app.get('/api/prices/:phrase', async (req, res) => {
+  const phrase = req.params.phrase;
+
+  try {
+      const { avgPrices, searchDates } = await getPricesAndDates(phrase);
+      res.json({ avgPrices, searchDates });
+  } catch (error) {
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+
 async function getPricesAndDates(phrase) {
   try {
     // Wyszukaj wszystkie wpisy dla danego `phrase` i wybierz tylko `avgPrice` oraz `searchDate`
