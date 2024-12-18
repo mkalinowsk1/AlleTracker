@@ -123,9 +123,7 @@ app.get('/api/product/:phrase', async (req, res) => {
   }
 });
 
-app.get('/api/prices/:phrase', async (req, res) => {
-  const phrase = req.params.phrase;
-
+async function getPricesAndDates(phrase) {
   try {
     // Wyszukaj wszystkie wpisy dla danego `phrase` i wybierz tylko `avgPrice` oraz `searchDate`
     const prices = await PriceSearch.find(
@@ -134,7 +132,7 @@ app.get('/api/prices/:phrase', async (req, res) => {
     ).sort({ searchDate: 1 }); // Opcjonalnie sortuj wyniki po dacie rosnąco
 
     if (!prices.length) {
-      return res.status(404).json({ error: 'No prices found for the given phrase' });
+      throw new Error('No prices found for the given phrase');
     }
 
     // Podziel wyniki na dwie tablice: ceny i daty (przekonwertowane na `day.month.year`)
@@ -144,12 +142,12 @@ app.get('/api/prices/:phrase', async (req, res) => {
       return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
     });
 
-    res.json({ avgPrices, searchDates });
+    return { avgPrices, searchDates };
   } catch (error) {
     console.error('Error fetching prices:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    throw new Error('Internal Server Error');
   }
-});
+}
 
 
 
