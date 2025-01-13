@@ -21,7 +21,7 @@ export default {
 <style>
 /* Global styles */
 body {
-  margin: 0;
+  margin: 20;
   font-family: Arial, sans-serif;
   background-color: #0d1b2a;
   color: #fff;
