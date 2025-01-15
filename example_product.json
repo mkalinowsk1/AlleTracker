@@ -1,0 +1,33 @@
+[
+    {
+      "phrase": "EXAMPLE_PRODUCT",
+      "maxPrice": 1500,
+      "minPrice": 1000,
+      "avgPrice": 1250,
+      "itemCount": 10,
+      "searchDate": "2024-12-01T10:00:00.000Z",
+      "imageUrl": "http://example.com/image1.jpg",
+      "offerId": "offer123"
+    },
+    {
+      "phrase": "EXAMPLE_PRODUCT",
+      "maxPrice": 1550,
+      "minPrice": 1100,
+      "avgPrice": 1300,
+      "itemCount": 12,
+      "searchDate": "2024-12-02T11:00:00.000Z",
+      "imageUrl": "http://example.com/image2.jpg",
+      "offerId": "offer456"
+    },
+    {
+      "phrase": "EXAMPLE_PRODUCT",
+      "maxPrice": 1400,
+      "minPrice": 1050,
+      "avgPrice": 1225,
+      "itemCount": 8,
+      "searchDate": "2024-12-03T12:00:00.000Z",
+      "imageUrl": "http://example.com/image3.jpg",
+      "offerId": "offer789"
+    }
+  ]
+  

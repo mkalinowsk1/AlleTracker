@@ -1,6 +1,11 @@
 # alletracker
 
 ## Project setup
+
+REQUIRES DOCKER ENVIRONMENT TO WORK
+
+### Packages
+
 ```
 npm install
 ```

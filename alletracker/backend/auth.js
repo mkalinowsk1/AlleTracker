@@ -3,11 +3,11 @@ require('dotenv').config();
 
 const config = {
 	client: {
-		id: process.env.CLIENT_ID,
-		secret: process.env.CLIENT_SECRET,
+		id: '79f67d44cb14459dad7cef11bc4f51a0',
+		secret: 'uaOXxwMbPwGzh1nMxPF2wgr5Msa1x0DEPAomv9975lZaEgzz3YUw0R2KccE2IUsr',
 	},
 	auth: {
-		tokenHost: 'https://allegro.pl',
+		tokenHost: 'https://allegro.pl.allegrosandbox.pl',
 		tokenPath: '/auth/oauth/token',
 	},
 };
@@ -27,4 +27,4 @@ async function getAccessToken() {
 	}
 }
 
-module.exports = { getAccessToken};
+module.exports = { getAccessToken };

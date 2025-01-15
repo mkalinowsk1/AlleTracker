@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/SearchBar.vue';
 import GraphPage from '../components/GraphPage.vue';
+import ProductDetails from '../components/ProductDetails.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
-  { path: '/graph', name: 'Graph', component: GraphPage },
+  { path: '/graph/:phrase', name: 'Graph', component: GraphPage },
+  { path: '/product/:id', name: 'Product', component: ProductDetails},
 ];
 
 const router = createRouter({
