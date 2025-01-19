@@ -151,7 +151,8 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 70vh;
-  background: linear-gradient(to bottom right, #e4f1fc, #c3e3fa);
+  background: linear-gradient(to bottom right, #e4f1fc, #c3e3fa); 
+  
 }
 
 /* Search bar container */
@@ -228,6 +229,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   max-width: 600px;
   width: 100%;
+  z-index: 1; /* Positioned under search bar if overlapping occurs */
 }
 
 .results ul {
@@ -265,5 +267,6 @@ export default {
   background: linear-gradient(45deg, #bcdbef 25%, transparent 25%, transparent 50%, #bcdbef 50%, #8ea2ae 75%, transparent 75%, transparent);
   background-size: 20px 20px;
   z-index: 0; /* Ensure it remains in the background */
+  pointer-events: none;
 }
 </style>

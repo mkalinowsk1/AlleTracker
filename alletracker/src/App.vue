@@ -9,6 +9,8 @@
 <script>
 import Header from './components/AppHeader.vue';
 import Footer from './components/AppFooter.vue';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 
 export default {
   components: {
@@ -23,8 +25,9 @@ export default {
 body {
   margin: 20;
   font-family: Arial, sans-serif;
-  background-color: #0d1b2a;
-  color: #fff;
+  width: 100%;
+  background: linear-gradient(to bottom right, #e4f1fc, #c3e3fa);
   text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Softer shadow */
 }
 </style>

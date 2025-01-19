@@ -1,89 +1,102 @@
 <template>
 <div class="product-details-container">
-	<div v-if="loading" class="loading-state">
-	Loading product details...
-	</div>
-	
-	<div v-else-if="error" class="error-state">
-	{{ error }}
-	</div>
-	
+	<div v-if="loading" class="loading-state">Loading product details...</div>
+
+	<div v-else-if="error" class="error-state">{{ error }}</div>
+
 	<div v-else class="product-card">
 	<div class="product-header">
 		<h1 class="product-title">{{ product.phrase }}</h1>
 	</div>
-	
+
 	<div class="product-content">
-		
 		<div class="price-stats">
 		<div class="price-card min">
-			<a :href="generateOfferLink(product.minOfferId)" target="_blank" rel="noopener noreferrer">
+			<a
+			:href="generateOfferLink(product.minOfferId)"
+			target="_blank"
+			rel="noopener noreferrer"
+			>
 			<div class="price-label">Minimum Price</div>
-			<img 
-		:src="product.minImageUrl || '/placeholder.jpg'" 
-		:alt="product.phrase || 'Product image'" 
-		class="product-image" 
-		@error="handleImageError"
-		/>
-			<div class="price-value">{{ formatPrice(product.minPrice) }} zł</div>
-		</a>
-		</div>
-		
-		<div class="price-card avg">
-			<a :href="generateOfferLink(product.avgOfferId)" target="_blank" rel="noopener noreferrer">
-			<div class="price-label">Average Price</div>
-			<img 
-		:src="product.avgImageUrl || '/placeholder.jpg'" 
-		:alt="product.phrase || 'Product image'" 
-		class="product-image" 
-		@error="handleImageError"
-		/>
-			<div class="price-value">{{ formatPrice(product.avgPrice) }} zł
+			<img
+				:src="product.minImageUrl || '/placeholder.jpg'"
+				:alt="product.phrase || 'Product image'"
+				class="product-image"
+				@error="handleImageError"
+			/>
+			<div class="price-value">
+				{{ formatPrice(product.minPrice) }} zł
 			</div>
-		</a>
+			</a>
 		</div>
-		
+
+		<div class="price-card avg">
+			<a
+			:href="generateOfferLink(product.avgOfferId)"
+			target="_blank"
+			rel="noopener noreferrer"
+			>
+			<div class="price-label">Average Price</div>
+			<img
+				:src="product.avgImageUrl || '/placeholder.jpg'"
+				:alt="product.phrase || 'Product image'"
+				class="product-image"
+				@error="handleImageError"
+			/>
+			<div class="price-value">
+				{{ formatPrice(product.avgPrice) }} zł
+			</div>
+			</a>
+		</div>
+
 		<div class="price-card max">
-			<a :href="generateOfferLink(product.maxOfferId)" target="_blank" rel="noopener noreferrer">
+			<a
+			:href="generateOfferLink(product.maxOfferId)"
+			target="_blank"
+			rel="noopener noreferrer"
+			>
 			<div class="price-label">Maximum Price</div>
-			<img 
-		:src="product.maxImageUrl || '/placeholder.jpg'" 
-		:alt="product.phrase || 'Product image'" 
-		class="product-image" 
-		@error="handleImageError"
-		/>
-			<div class="price-value">{{ formatPrice(product.maxPrice) }} zł</div>
-		</a>
+			<img
+				:src="product.maxImageUrl || '/placeholder.jpg'"
+				:alt="product.phrase || 'Product image'"
+				class="product-image"
+				@error="handleImageError"
+			/>
+			<div class="price-value">
+				{{ formatPrice(product.maxPrice) }} zł
+			</div>
+			</a>
 		</div>
 		</div>
 
 		<div class="item-count">
 		Based on {{ product.itemCount || 0 }} items
 		</div>
-		<div  class="graph-link" >
-			<router-link :to="`/graph/${product.phrase}`" class="graph-button">
-					View Graph Statistics
-				</router-link>
-</div>
+		<div class="graph-link">
+		<router-link :to="`/graph/${product.phrase}`" class="graph-button">
+			<i class="fas fa-chart-line"></i> 
+			<span class="button-text">view price history</span>
+		</router-link>
+		</div>
 	</div>
 	</div>
 </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
 
 export default {
-name: 'ProductDetails',
+name: "ProductDetails",
 
 setup() {
 	const route = useRoute();
 	const product = ref({});
 	const loading = ref(true);
 	const error = ref(null);
-	
+
 	const fetchProductDetails = async () => {
 	try {
 		loading.value = true;
@@ -91,39 +104,40 @@ setup() {
 		const response = await axios.get(`/api/product/${route.params.id}`);
 		product.value = response.data;
 	} catch (err) {
-		error.value = 'Failed to load product details. Please try again later.';
-		console.error('Error fetching product details:', err);
+		error.value =
+		"Failed to load product details. Please try again later.";
+		console.error("Error fetching product details:", err);
 	} finally {
 		loading.value = false;
 	}
 	};
 
 	const handleImageError = (e) => {
-    if (!e.target.src.endsWith('placeholder.jpg')) {
-        e.target.src = '/placeholder.jpg';
-    }
-};
+	if (!e.target.src.endsWith("placeholder.jpg")) {
+		e.target.src = "/placeholder.jpg";
+	}
+	};
 
 	const formatPrice = (price) => {
 	return Number(price).toFixed(2);
 	};
 
 	const generateOfferLink = (offerId) => {
-    return `https://allegro.pl.allegrosandbox.pl/oferta/${offerId}`;
-    };
+	return `https://allegro.pl.allegrosandbox.pl/oferta/${offerId}`;
+	};
 
 	const goToGraph = (product) => {
-      if (!product || !product.name) {
-        console.error('Invalid product data');
-        return;
-      }
+	if (!product || !product.name) {
+		console.error("Invalid product data");
+		return;
+	}
 
-      try {
-        window.location.href = `/graph/${product.name}`;
-      } catch (err) {
-        console.error('Navigation error:', err);
-      }
-    };
+	try {
+		window.location.href = `/graph/${product.name}`;
+	} catch (err) {
+		console.error("Navigation error:", err);
+	}
+	};
 
 	onMounted(() => {
 	fetchProductDetails();
@@ -136,9 +150,9 @@ setup() {
 	handleImageError,
 	formatPrice,
 	generateOfferLink,
-	goToGraph
+	goToGraph,
 	};
-}
+},
 };
 </script>
 
@@ -259,6 +273,49 @@ border-radius: 8px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.graph-button {
+/* text-align: center;
+margin: 1rem auto;
+cursor: pointer;
+color: #007bff;
+font-weight: bold;
+text-decoration: underline; */
+display: flex; /* Use flexbox for vertical alignment */
+flex-direction: column; /* Arrange items vertically */
+align-items: center; /* Center the icon and text */
+text-align: center; /* Center-align the text */
+padding: 1rem; /* Add some padding for spacing */
+color: #007bff; /* Button text and icon color */
+font-weight: bold; /* Make the text bold */
+text-decoration: none; /* Remove underline from the link */
+transition: transform 0.2s ease; /* Add hover effect */
+}
+
+.graph-button:hover {
+	transform: scale(1.5);
+}
+.icon {
+  font-size: 3rem; /* Set the size of the icon */
+  margin-bottom: 0.5rem; /* Add spacing below the icon */
+  color: #007bff; /* Same color as the text */
+}
+.button-text {
+  font-size: 1rem; /* Font size for the text */
+  color: #007bff; 
+}
+
+:deep(.container) {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(45deg, #bcdbef 25%, transparent 25%, transparent 50%, #bcdbef 50%, #8ea2ae 75%, transparent 75%, transparent);
+background-size: 20px 20px;
+z-index: 2; /* Ensure it remains in the background */
+pointer-events: none;
+}
+
 @media (max-width: 768px) {
 .price-stats {
 	grid-template-columns: 1fr;
@@ -271,18 +328,5 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 .product-content {
 	padding: 1rem;
 }
-
-.graph-link {
-    text-align: center;
-    margin: 1rem auto;
-    cursor: pointer;
-    color: #007bff;
-    font-weight: bold;
-    text-decoration: underline;
-}
-.graph-link:hover {
-    text-decoration: none;
-}
-
 }
 </style>
