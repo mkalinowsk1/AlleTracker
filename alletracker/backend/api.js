@@ -24,18 +24,30 @@ async function searchAndCalculatePrices(phrase) {
 
       // Extract relevant data
       const processItems = (list) => {
+          if (!list || !Array.isArray(list)) return;
+          
           list.forEach((item) => {
-              const price = parseFloat(item.sellingMode.price.amount);
-              prices.push(price);
-              items.push({ price, offerId: item.id, imageUrl: item.images[0]?.url || null });
+              if (item && item.sellingMode && item.sellingMode.price) {
+                  const price = parseFloat(item.sellingMode.price.amount);
+                  if (!isNaN(price)) {
+                      prices.push(price);
+                      items.push({
+                          price,
+                          offerId: item.id || null,
+                          imageUrl: item.images && item.images[0] ? item.images[0].url : null
+                      });
+                  }
+              }
           });
       };
 
-      if (data.items.promoted && data.items.promoted.length > 0) {
-          processItems(data.items.promoted);
-      }
-      if (data.items.regular && data.items.regular.length > 0) {
-          processItems(data.items.regular);
+      if (data.items) {
+          if (data.items.promoted && Array.isArray(data.items.promoted)) {
+              processItems(data.items.promoted);
+          }
+          if (data.items.regular && Array.isArray(data.items.regular)) {
+              processItems(data.items.regular);
+          }
       }
 
       if (prices.length > 0) {
@@ -43,29 +55,27 @@ async function searchAndCalculatePrices(phrase) {
           const minPrice = Math.min(...prices);
           const avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
 
-          // Find respective products
-          const maxProduct = items.find(item => item.price === maxPrice);
-          const minProduct = items.find(item => item.price === minPrice);
+          const maxProduct = items.find(item => item.price === maxPrice) || {};
+          const minProduct = items.find(item => item.price === minPrice) || {};
           const avgProduct = items.reduce((closest, item) => {
               return Math.abs(item.price - avgPrice) < Math.abs(closest.price - avgPrice) ? item : closest;
-          }, items[0]);
+          }, items[0]) || {};
 
-          console.log(`[DEBUG] Max Price: ${maxPrice}, Min Price: ${minPrice}, Avg Price: ${avgPrice}`);
           return {
               maxPrice,
               minPrice,
               avgPrice,
               itemCount: prices.length,
               phrase,
-              maxOfferId: maxProduct?.offerId || null,
-              maxImageUrl: maxProduct?.imageUrl || null,
-              minOfferId: minProduct?.offerId || null,
-              minImageUrl: minProduct?.imageUrl || null,
-              avgOfferId: avgProduct?.offerId || null,
-              avgImageUrl: avgProduct?.imageUrl || null,
+              maxOfferId: maxProduct.offerId || null,
+              maxImageUrl: maxProduct.imageUrl || null,
+              minOfferId: minProduct.offerId || null,
+              minImageUrl: minProduct.imageUrl || null,
+              avgOfferId: avgProduct.offerId || null,
+              avgImageUrl: avgProduct.imageUrl || null,
           };
       } else {
-          console.log('[DEBUG] No prices found.');
+          // Jeśli nie znaleziono żadnych cen, zwróć podstawowe dane
           return {
               maxPrice: 0,
               minPrice: 0,
