@@ -28,32 +28,36 @@ const PriceSearchSchema = new mongoose.Schema({
     },
     maxImageUrl: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
     maxOfferId: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
     minImageUrl: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
     minOfferId: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
     avgImageUrl: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
     avgOfferId: {
         type: String,
-        required: true,
+        required: false,  // Zmienione z true na false
+        default: null
     },
 }, {
-    versionKey: false // Disable the "__v" field
+    versionKey: false
 });
 
-const PriceSearch = mongoose.model('PriceSearch', PriceSearchSchema);
-
-module.exports = PriceSearch;
+module.exports = mongoose.model('PriceSearch', PriceSearchSchema);
