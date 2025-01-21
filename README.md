@@ -6,6 +6,5 @@ AlleTracker is currently being developed by a team of students from the IT Insti
 ## Tech Stack:
 - ![JavaScript](https://img.shields.io/badge/JavaScript-FFD43B?style=flat-square&logo=javascript&logoColor=black) 
 - ![VueJS](https://img.shields.io/badge/-Vue.js-4fc08d?style=flat&logo=vuedotjs&logoColor=white) 
-- ![Jest](https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white) for unit testing
 - [![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white)](#)
 - [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](#)
